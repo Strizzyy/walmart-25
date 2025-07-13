@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+
+# Virtual environment
+venv/
+.venv/
+
+# VSCode settings
+.vscode/
+
+
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Python egg info
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Test coverage reports
+htmlcov/
+.coverage
+.tox/
+
+# SQLite DB files (if any)
+*.sqlite3
+*.db
+
+# Pycharm specific
+.idea/
+
+# Other
+*.bak
