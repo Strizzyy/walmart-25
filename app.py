@@ -535,8 +535,8 @@ def subscription_page():
     # Header
     st.markdown("""
     <div class="main-header">
-        <h1>🛒 Subscription Management</h1>
-        <p>Manage your Walmart subscriptions</p>
+        <h1>🛒 Autonomous Order Planner</h1>
+        <p>Manage your Walmart order plans</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -563,24 +563,24 @@ def subscription_page():
         <div class="subscription-panel">
         """, unsafe_allow_html=True)
         if not customer_id:
-            st.info("Select a customer to manage subscriptions.")
+            st.info("Select a customer to manage Order Plans.")
         else:
             # Display existing subscriptions
             subscriptions = get_subscriptions(customer_id)
             if subscriptions:
-                st.subheader("Current Subscriptions")
+                st.subheader("Current Order plans")
                 for sub in subscriptions:
-                    st.markdown(f"**Subscription {sub['subscription_id']}**")
+                    st.markdown(f"**Order Plan {sub['subscription_id']}**")
                     st.markdown(f"- **Items**: {', '.join([item['name'] for item in sub['items']])}")
                     st.markdown(f"- **Delivery Day**: {sub['delivery_day']}")
                     st.markdown(f"- **Next Delivery**: {sub['next_delivery']}")
                     st.markdown(f"- **Status**: {sub['status']}")
                     if st.button(f"Cancel {sub['subscription_id']}", key=f"cancel_{sub['subscription_id']}"):
                         if cancel_subscription(sub['subscription_id']):
-                            st.success(f"Subscription {sub['subscription_id']} cancelled.")
+                            st.success(f"Order Plan {sub['subscription_id']} cancelled.")
                             st.rerun()
             else:
-                st.info("No subscriptions found for this customer.")
+                st.info("No order plan found for this customer.")
 
             # Subscription notifications
             notifications = get_subscription_notifications(customer_id)
@@ -605,11 +605,11 @@ def subscription_page():
                     items = [{"name": item_name, "price": item_price, "quantity": item_quantity}]
                     response = create_subscription(customer_id, items, delivery_day)
                     if response and ('message' in response or response.get('subscription')):
-                        st.success(response.get('message', f"Subscription created successfully!"))
+                        st.success(response.get('message', f"Order Plan created successfully!"))
                     elif response and 'error' in response:
-                        st.error(f"Failed to create subscription: {response['error']}")
+                        st.error(f"Failed to create order plan: {response['error']}")
                     else:
-                        st.error("Failed to create subscription. Please try again.")
+                        st.error("Failed to create order plan. Please try again.")
                     st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -619,7 +619,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-page = st.radio("Navigate", ["Support Dashboard", "Subscriptions"], horizontal=True, key="page_navigation")
+page = st.radio("Navigate", ["Support Dashboard", "Autonomous Order Planner"], horizontal=True, key="page_navigation")
 if page == "Support Dashboard":
     main_page()
 else:
