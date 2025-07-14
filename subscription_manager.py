@@ -75,7 +75,14 @@ class SubscriptionManager:
                 if 1 <= days_until <= 2:
                     items = ", ".join([item["name"] for item in sub["items"]])
                     return {
-                        "message": f"Reminder: Your subscription {subscription_id} will restock {items} on {sub['next_delivery']}.",
+                        "message": f"Reminder: Your planned order {subscription_id} will restock {items} on {sub['next_delivery']}.",
+                        "subscription_id": subscription_id,
+                        "delivery_date": sub["next_delivery"]
+                    }
+                if days_until < 1:
+                    items = ", ".join([item["name"] for item in sub["items"]])
+                    return {
+                        "message": f"Reminder: Your planned order {subscription_id} will restock {items} on {sub['next_delivery']} i.e tomorrow.",
                         "subscription_id": subscription_id,
                         "delivery_date": sub["next_delivery"]
                     }
