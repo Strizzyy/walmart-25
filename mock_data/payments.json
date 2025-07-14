@@ -35,6 +35,18 @@
       "gateway": "PhonePe"
     },
     {
+      "payment_id": "PAY007",
+      "customer_id": "WM004",
+      "order_id": "ORD006",
+      "amount": 2198.00,
+      "status": "failed",
+      "method": "cod",
+      "timestamp": "2024-07-13T13:25:00Z",
+      "transaction_id": "TXN007",
+      "gateway": "Cash on Delivery",
+      "error": "Payment not processed"
+    },
+    {
       "payment_id": "PAY004",
       "customer_id": "WM002",
       "order_id": "ORD004",

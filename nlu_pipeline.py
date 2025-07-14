@@ -9,10 +9,8 @@ class NLUPipeline:
         self.client = groq.Groq(api_key=groq_api_key)
         self.data_handler = DataHandler()
         self.subscription_manager = SubscriptionManager()
-        
-        # Intent keywords for quick classification
         self.intent_keywords = {
-            'REFUND_REQUEST': ['refund', 'money back', 'return', 'cancel order', 'get my money'],
+            'REFUND_REQUEST': ['refund', 'money back', 'return', 'cancel order', 'get my money', 'damaged'],
             'DELIVERY_ISSUE': ['not delivered', 'missing', 'delay', 'late', 'not received', 'where is'],
             'PAYMENT_PROBLEM': ['charged twice', 'payment failed', 'double charge', 'not charged', 'billing'],
             'WALLET_ISSUE': ['wallet', 'balance', 'credited', 'deducted', 'shows 0', 'wallet empty'],
@@ -22,40 +20,26 @@ class NLUPipeline:
         }
     
     def extract_order_id(self, message: str) -> str:
-        """Extract order ID from message"""
         order_pattern = r'ORD\d{3}'
         match = re.search(order_pattern, message)
         return match.group() if match else None
     
     def extract_amount(self, message: str) -> float:
-        """Extract amount from message"""
         amount_pattern = r'₹(\d+(?:\.\d{2})?)'
         match = re.search(amount_pattern, message)
         return float(match.group(1)) if match else None
     
     def extract_subscription_items(self, message: str) -> list[str]:
-        """Extract item names for subscription from message"""
-        # Simple extraction for demo; in production, use more sophisticated NLP
         words = message.lower().split()
         common_items = ['milk', 'vegetables', 'rice', 'oil', 'detergent', 'biscuits']
         return [word for word in words if word in common_items]
     
     def classify_intent_quick(self, message: str) -> str:
-        """Quick intent classification using keywords"""
         message_lower = message.lower()
-        scores = {}
-        
-        for intent, keywords in self.intent_keywords.items():
-            score = sum(1 for keyword in keywords if keyword in message_lower)
-            if score > 0:
-                scores[intent] = score
-        
-        if scores:
-            return max(scores.items(), key=lambda x: x[1])[0]
-        return 'GENERAL_INQUIRY'
+        scores = {intent: sum(1 for keyword in keywords if keyword in message_lower) for intent, keywords in self.intent_keywords.items()}
+        return max(scores.items(), key=lambda x: x[1])[0] if any(scores.values()) else 'GENERAL_INQUIRY'
     
     def classify_intent_groq(self, message: str) -> str:
-        """Fallback intent classification using Groq"""
         prompt = f"""
         Classify this customer support message into ONE of these intents:
         REFUND_REQUEST, DELIVERY_ISSUE, PAYMENT_PROBLEM, WALLET_ISSUE, ORDER_STATUS, SUBSCRIPTION_REQUEST, GENERAL_INQUIRY
@@ -64,7 +48,6 @@ class NLUPipeline:
         
         Return only the intent name, nothing else.
         """
-        
         try:
             response = self.client.chat.completions.create(
                 model="llama-3.1-8b-instant",
@@ -77,32 +60,18 @@ class NLUPipeline:
             return self.classify_intent_quick(message)
     
     def classify_intent(self, message: str) -> str:
-        """Main intent classification method"""
-        # Try quick classification first
         intent = self.classify_intent_quick(message)
-        
-        # If general inquiry, use Groq for better classification
         if intent == 'GENERAL_INQUIRY':
             intent = self.classify_intent_groq(message)
-        
         return intent
     
     def generate_response(self, intent: str, message: str, customer_id: str) -> str:
-        """Generate contextual response based on intent and customer data"""
         customer = self.data_handler.get_customer(customer_id)
         if not customer:
             return "I'm sorry, I couldn't find your customer information. Please contact support."
         
-        # Extract relevant information
         order_id = self.extract_order_id(message)
         amount = self.extract_amount(message)
-        
-        # Get customer context
-        customer_orders = self.data_handler.get_customer_orders(customer_id)
-        customer_payments = self.data_handler.get_customer_payments(customer_id)
-        customer_subscriptions = self.data_handler.get_customer_subscriptions(customer_id)
-        
-        # Build context for Groq
         context = f"""
         You are a helpful Walmart customer support agent. Respond professionally and helpfully.
         
@@ -112,47 +81,32 @@ class NLUPipeline:
         - Membership: {customer['membership']}
         - Location: {customer['location']}
         
-        Recent Orders: {len(customer_orders)} orders
-        Active Subscriptions: {len([s for s in customer_subscriptions if s['status'] == 'active'])} subscriptions
+        Recent Orders: {len(self.data_handler.get_customer_orders(customer_id))} orders
+        Active Subscriptions: {len([s for s in self.data_handler.get_customer_subscriptions(customer_id) if s['status'] == 'active'])} subscriptions
         Intent: {intent}
         Customer Message: "{message}"
-        
-        Based on the intent, provide a helpful response:
         """
         
         if intent == 'WALLET_ISSUE':
-            context += f"""
-            Recent payments: {len(customer_payments)} transactions
-            Current wallet balance: ₹{customer['wallet_balance']}
-            
-            If wallet shows ₹0 but customer paid, explain payment processing and offer to credit wallet.
-            """
+            context += "Recent payments: {} transactions\nCurrent wallet balance: ₹{}\nIf wallet shows ₹0 but customer paid, explain payment processing and offer to credit wallet.".format(
+                len(self.data_handler.get_customer_payments(customer_id)), customer['wallet_balance'])
         
         elif intent == 'DELIVERY_ISSUE':
             if order_id:
                 order = self.data_handler.get_order(order_id)
                 if order:
-                    context += f"""
-                    Order {order_id} details:
-                    - Status: {order['status']}
-                    - Expected delivery: {order['expected_delivery']}
-                    - Items: {len(order['items'])} items
-                    """
+                    context += f"\nOrder {order_id} details:\n- Status: {order['status']}\n- Expected delivery: {order['expected_delivery']}\n- Items: {len(order['items'])} items"
         
         elif intent == 'PAYMENT_PROBLEM':
             failed_payments = self.data_handler.get_failed_payments(customer_id)
-            context += f"""
-            Failed payments: {len(failed_payments)}
-            Recent payment issues found.
-            """
+            context += f"\nFailed payments: {len(failed_payments)}\nRecent payment issues found."
+        
+        elif intent == 'REFUND_REQUEST':
+            context += "\nFor refunds, suggest uploading an image of the damaged item or proof. If evidence is provided, validate and process autonomously or escalate."
         
         elif intent == 'SUBSCRIPTION_REQUEST':
             items = self.extract_subscription_items(message)
-            context += f"""
-            Customer wants to set up a subscription.
-            Potential items mentioned: {', '.join(items) if items else 'None'}
-            Suggest creating a subscription for these items with weekly delivery or ask for clarification.
-            """
+            context += f"\nCustomer wants to set up a subscription.\nPotential items mentioned: {', '.join(items) if items else 'None'}\nSuggest creating a subscription for these items with weekly delivery or ask for clarification."
         
         context += "\n\nProvide a concise, helpful response (max 100 words)."
         
@@ -168,14 +122,13 @@ class NLUPipeline:
             return self._fallback_response(intent, customer, order_id)
     
     def _fallback_response(self, intent: str, customer: Dict, order_id: str = None) -> str:
-        """Fallback responses when API fails"""
         responses = {
-            'WALLET_ISSUE': f"Hi {customer['name']}! I can see your current wallet balance is ₹{customer['wallet_balance']}. Let me help you resolve this payment issue.",
-            'DELIVERY_ISSUE': f"Hi {customer['name']}! I'm checking your delivery status right now. Let me get you an update.",
-            'PAYMENT_PROBLEM': f"Hi {customer['name']}! I can help you with your payment concerns. Let me review your recent transactions.",
-            'ORDER_STATUS': f"Hi {customer['name']}! I'll check your order status for you right away.",
-            'REFUND_REQUEST': f"Hi {customer['name']}! I can help you with your refund request. Let me process this for you.",
-            'SUBSCRIPTION_REQUEST': f"Hi {customer['name']}! I can help you set up a weekly subscription. Please specify the items and preferred delivery day.",
-            'GENERAL_INQUIRY': f"Hi {customer['name']}! I'm here to help. How can I assist you today?"
+            'WALLET_ISSUE': f"Hi {customer['name']}! Your wallet balance is ₹{customer['wallet_balance']}. Let me resolve this.",
+            'DELIVERY_ISSUE': f"Hi {customer['name']}! Checking delivery status for {order_id if order_id else 'your order'}.",
+            'PAYMENT_PROBLEM': f"Hi {customer['name']}! Reviewing your payment issues.",
+            'ORDER_STATUS': f"Hi {customer['name']}! Checking order status.",
+            'REFUND_REQUEST': f"Hi {customer['name']}! Please upload an image of the damaged item for refund processing.",
+            'SUBSCRIPTION_REQUEST': f"Hi {customer['name']}! Let’s set up a subscription. Specify items and day.",
+            'GENERAL_INQUIRY': f"Hi {customer['name']}! How can I assist you?"
         }
         return responses.get(intent, "I'm here to help you with your query!")

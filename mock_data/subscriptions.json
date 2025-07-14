@@ -96,6 +96,54 @@
       "next_delivery": "2025-07-16",
       "status": "active",
       "created_at": "2025-07-14T10:30:29.326336"
+    },
+    {
+      "subscription_id": "SUB007",
+      "customer_id": "WM001",
+      "items": [
+        {
+          "name": "ok",
+          "price": 2.0,
+          "quantity": 1
+        }
+      ],
+      "delivery_day": "Monday",
+      "frequency": "weekly",
+      "next_delivery": "2025-07-21",
+      "status": "active",
+      "created_at": "2025-07-14T13:48:31.687278"
+    },
+    {
+      "subscription_id": "SUB008",
+      "customer_id": "WM001",
+      "items": [
+        {
+          "name": "ok",
+          "price": 10.0,
+          "quantity": 1
+        }
+      ],
+      "delivery_day": "Monday",
+      "frequency": "weekly",
+      "next_delivery": "2025-07-21",
+      "status": "active",
+      "created_at": "2025-07-14T15:38:20.190896"
+    },
+    {
+      "subscription_id": "SUB009",
+      "customer_id": "WM001",
+      "items": [
+        {
+          "name": "ok",
+          "price": 10.0,
+          "quantity": 1
+        }
+      ],
+      "delivery_day": "Tuesday",
+      "frequency": "weekly",
+      "next_delivery": "2025-07-15",
+      "status": "active",
+      "created_at": "2025-07-14T15:38:42.160632"
     }
   ]
 }
