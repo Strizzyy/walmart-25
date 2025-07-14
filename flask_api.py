@@ -5,12 +5,14 @@ import os
 from nlu_pipeline import NLUPipeline
 from subscription_manager import SubscriptionManager
 from datetime import datetime
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 CORS(app)
+load_dotenv()
 
 # Initialize NLU Pipeline and Subscription Manager
-GROQ_API_KEY = "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"  # Replace with your actual API key
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # Replace with your actual API key
 nlu = NLUPipeline(GROQ_API_KEY)
 subscription_manager = SubscriptionManager()
 
