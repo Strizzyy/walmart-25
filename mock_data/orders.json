@@ -36,6 +36,23 @@
       "delivery_partner": "Walmart Spark"
     },
     {
+      "order_id": "ORD007",
+      "customer_id": "WM003",
+      "status": "delivered",
+      "order_date": "2024-07-12",
+      "delivery_date": "2024-07-14",
+      "expected_delivery": "2024-07-14",
+      "items": [
+        {"name": "Glassware Set", "price": 1500.00, "quantity": 1, "category": "Home"}
+      ],
+      "total_amount": 1500.00,
+      "payment_method": "wallet",
+      "delivery_address": "Apartment 5B, Tech Park Road, Bangalore - 560001",
+      "tracking_id": "TRK007",
+      "delivery_partner": "Walmart Spark",
+      "damage_reported": true
+    },
+    {
       "order_id": "ORD003",
       "customer_id": "WM002",
       "status": "shipped",

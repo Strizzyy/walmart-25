@@ -1,0 +1,244 @@
+{
+  "escalations": {
+    "e1214feb-e17e-472f-ba1f-44fdd6264c99": {
+      "customer_id": "WM001",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T14:55:04.649625"
+    },
+    "0e0ad6f4-f02f-472d-9b35-84e9bc47b60e": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T14:56:04.425901"
+    },
+    "3926e56c-f183-4d4a-9061-16a89be23bf8": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:03:16.010748"
+    },
+    "0affd05e-2f7f-4ab4-b9b5-d1748a701f70": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:05:00.458129"
+    },
+    "719672d9-d821-4554-a8d2-e391226b5bf9": {
+      "customer_id": "WM001",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:10:26.100883"
+    },
+    "87e60887-5888-4ffa-a67b-865d4f0751d1": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:11:41.018776"
+    },
+    "b27ba1bc-36d2-4239-8583-f007390e1bc8": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:15:40.967755"
+    },
+    "eac5dcc7-3573-4e1a-9a3b-bfc41bece1a5": {
+      "customer_id": "WM001",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:20:29.826713"
+    },
+    "d954c0b2-730f-4e69-83e8-cc555c07dd15": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:20:42.746246"
+    },
+    "0431225e-3901-4731-a6d0-92fe27254e92": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:26:31.368276"
+    },
+    "9d6ad715-36aa-4f36-a12a-4fdb18f8f80e": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:33:47.341833"
+    },
+    "4541f49d-d120-4776-81dc-54c9bf3099ef": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:36:27.631001"
+    },
+    "c50608ab-e5fe-4ec6-946c-95bf55579460": {
+      "customer_id": "WM003",
+      "issue_details": "I want a refund for ORD005 because the item was damaged.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:42:58.004769"
+    },
+    "b3d5940b-8a6f-4d70-88ea-3652121227fc": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:56:59.441697"
+    },
+    "ba7fc66e-85bb-430a-b3a6-f1a05e990c60": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement",
+      "status": "pending",
+      "escalation_time": "2025-07-14T15:58:59.942629"
+    },
+    "a663869f-e79f-4011-b6d7-3d3b30a3c632": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:00:33.322379"
+    },
+    "c9d4ec8f-508f-41c4-8243-705c17fe719a": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:07:38.812933"
+    },
+    "0e7dc386-a2ed-4047-90b8-41359e56cd4f": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:09:50.152063"
+    },
+    "149fe388-6646-4126-84e2-aeeb400660bb": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:11:57.287347"
+    },
+    "4079f4ce-0f65-4761-b5a1-6b39a292380a": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:14:48.956674"
+    },
+    "99466326-05d8-4e57-8c86-403898f87821": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:18:33.565779"
+    },
+    "16c24575-2839-4aec-8aee-cdf9e301f2db": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:26:53.349301"
+    },
+    "650c0336-36b0-4c4e-a171-bbf37686fdad": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:32:46.101678"
+    },
+    "386945bb-96e7-4815-9381-15cc2cfde93e": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:37:56.530133"
+    },
+    "d8221380-b957-4f0f-ba26-c9d8c547c5bd": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:41:29.282373"
+    },
+    "c9631f1a-bfc1-4d89-bc18-12f5cf1be546": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:46:42.377024"
+    },
+    "14db829c-f5c4-44e9-a121-29a0eeff6234": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:50:10.827549"
+    },
+    "74e71c0a-a937-46bd-a2a1-b9c5c692a94c": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:52:26.692139"
+    },
+    "33d462fb-31e9-4a7e-9859-ba3ee5117862": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:53:25.385995"
+    },
+    "253c9235-be97-4d45-acfa-c48fc230744b": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T16:58:16.268909"
+    },
+    "e7d8ef93-cc4e-4be6-b799-95adc53464e4": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:00:20.981175"
+    },
+    "58b9f24f-a3f3-4e06-a366-547a95b9d942": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:01:55.179900"
+    },
+    "8c3387cb-0145-4608-8a3a-240ad9375100": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:05:03.732823"
+    },
+    "8b7b2ed2-e4ad-4a2a-bf21-3b52aeb11265": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:12:01.031888"
+    },
+    "82bcebf1-6d5f-4214-bec5-158b65e01763": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:17:14.660060"
+    },
+    "0534e63f-f4cf-4517-82eb-0d721a007107": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:20:20.158622"
+    },
+    "ea85deae-85b8-4f17-ad1e-a25783fd5090": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:24:35.423347"
+    },
+    "b861b680-616b-4138-a699-38915734f59e": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:28:59.281964"
+    },
+    "5645f646-b216-41e1-89e7-ecd977448065": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:31:03.017162"
+    },
+    "384840e5-9145-4315-9e13-ee1cd72becfe": {
+      "customer_id": "WM001",
+      "issue_details": "My washing machine delivery was damaged, I have pictures of the dented corners. Order number ORD005. I need a refund or replacement.",
+      "status": "pending",
+      "escalation_time": "2025-07-14T17:36:05.827353"
+    }
+  }
+}
