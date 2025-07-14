@@ -2,10 +2,11 @@ import streamlit as st
 import requests
 import json
 import time
-from datetime import datetime
+from datetime import datetime, date
 import pytz
 import plotly.express as px
 import logging
+import calendar
 
 logging.basicConfig(
     level=logging.INFO,
@@ -390,7 +391,7 @@ def get_analytics():
 def create_subscription(customer_id, items, delivery_date, subscription_type):
     """Create a subscription via API with subscription type"""
     try:
-        logging.info(f"Creating subscription for customer {customer_id} with items {items} and delivery day {delivery_day}.")
+        logging.info(f"Creating subscription for customer {customer_id} with items {items} and delivery date {delivery_date}.")
         response = requests.post(
             f"{API_BASE_URL}/subscription",
             json={"customer_id": customer_id, "items": items, "delivery_date": delivery_date, "subscription_type": subscription_type},
@@ -400,8 +401,8 @@ def create_subscription(customer_id, items, delivery_date, subscription_type):
             logging.info(f"Subscription created for customer {customer_id}.")
             return response.json()
         else:
-            logging.error(f"Failed to create subscription: HTTP {response.status_code}")
-            st.error(f"Failed to create subscription: HTTP {response.status_code}")
+            logging.error(f"Failed to create subscription: HTTP {response.status_code} - {response.text}")
+            st.error(f"Failed to create subscription: HTTP {response.status_code} - {response.text}")
             return None
     except requests.exceptions.RequestException as e:
         logging.error(f"Error creating subscription: {e}")
@@ -417,8 +418,8 @@ def get_subscriptions(customer_id):
             logging.info(f"Subscriptions fetched for customer {customer_id}.")
             return response.json().get('subscriptions', [])
         else:
-            logging.error(f"Failed to fetch subscriptions: HTTP {response.status_code}")
-            st.error(f"Failed to fetch subscriptions: HTTP {response.status_code}")
+            logging.error(f"Failed to fetch subscriptions: HTTP {response.status_code} - {response.text}")
+            st.error(f"Failed to fetch subscriptions: HTTP {response.status_code} - {response.text}")
             return []
     except requests.exceptions.RequestException as e:
         logging.error(f"Error fetching subscriptions: {e}")
@@ -434,8 +435,8 @@ def cancel_subscription(subscription_id):
             logging.info(f"Subscription {subscription_id} cancelled.")
             return response.json()
         else:
-            logging.error(f"Failed to cancel subscription: HTTP {response.status_code}")
-            st.error(f"Failed to cancel subscription: HTTP {response.status_code}")
+            logging.error(f"Failed to cancel subscription: HTTP {response.status_code} - {response.text}")
+            st.error(f"Failed to cancel subscription: HTTP {response.status_code} - {response.text}")
             return None
     except requests.exceptions.RequestException as e:
         logging.error(f"Error cancelling subscription: {e}")
@@ -449,19 +450,10 @@ def get_subscription_notifications(customer_id):
         response = requests.get(f"{API_BASE_URL}/subscription/notifications/{customer_id}", timeout=5)
         if response.status_code == 200:
             logging.info(f"Notifications fetched for customer {customer_id}.")
-            subscriptions = get_subscriptions(customer_id)
-            ist_timezone = pytz.timezone('Asia/Kolkata')
-            current_time = datetime.now(ist_timezone)
-            notifications = [
-                {"message": f"Next delivery for {', '.join([item['name'] for item in sub['items']])} on {sub['next_delivery']}"}
-                for sub in subscriptions 
-                if sub['status'] == 'active' and 
-                ist_timezone.localize(datetime.fromisoformat(sub['next_delivery'].replace('Z', '+00:00'))) > current_time
-            ]
-            return {"notifications": notifications}
+            return response.json()
         else:
-            logging.error(f"Failed to fetch notifications: HTTP {response.status_code}")
-            st.error(f"Failed to fetch notifications: HTTP {response.status_code}")
+            logging.error(f"Failed to fetch notifications: HTTP {response.status_code} - {response.text}")
+            st.error(f"Failed to fetch notifications: HTTP {response.status_code} - {response.text}")
             return {"notifications": []}
     except requests.exceptions.RequestException as e:
         logging.error(f"Error fetching notifications: {e}")
@@ -761,6 +753,8 @@ def subscription_page():
                 st.subheader("Upcoming Deliveries")
                 for notif in notifications['notifications']:
                     st.markdown(f"- {notif['message']}")
+            else:
+                st.info("No upcoming delivery notifications.")
 
             # Placeholder Calendar for July 2025 in row and column format
             st.subheader("Select Delivery Date (July 2025)")
@@ -771,7 +765,7 @@ def subscription_page():
                 # Generate calendar for July 2025
                 cal = calendar.monthcalendar(2025, 7)
                 days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-                current_date = datetime.now().date()  # Get current date for comparison
+                current_date = datetime.now().date()  # Get current date for comparison (08:34 PM +08, July 14, 2025)
 
                 # Header row for days of the week
                 cols = st.columns(7)
@@ -787,7 +781,7 @@ def subscription_page():
                             if day == 0:
                                 st.markdown('<div class="calendar-day-disabled"></div>', unsafe_allow_html=True)
                             else:
-                                # Create date object for the calendar day
+                                # Create date object for the calendar day, ensuring valid day
                                 calendar_date = date(2025, 7, day)
                                 is_past_date = calendar_date < current_date
                                 is_selected = st.session_state.selected_date == calendar_date

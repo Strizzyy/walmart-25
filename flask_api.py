@@ -25,8 +25,6 @@ load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # Replace with your actual API key
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # Add Gemini API key to .env
 data_handler = DataHandler()
-# Initialize NLU Pipeline and Subscription Manager
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 nlu = NLUPipeline(GROQ_API_KEY)
 subscription_manager = SubscriptionManager()
 resolution_engine = ResolutionEngine(data_handler)
@@ -120,16 +118,12 @@ def create_subscription():
         data = request.json
         customer_id = data.get('customer_id')
         items = data.get('items')
-        delivery_day = data.get('delivery_day')
-        if not all([customer_id, items, delivery_day]):
-            logging.warning("Create subscription called with missing fields.")
         delivery_date = data.get('delivery_date')
         subscription_type = data.get('subscription_type', 'weekly')  # Default to weekly if not provided
         
         if not all([customer_id, items, delivery_date]):
+            logging.warning("Create subscription called with missing fields.")
             return jsonify({'error': 'Missing required fields'}), 400
-        subscription = subscription_manager.create_subscription(customer_id, items, delivery_day)
-        
         subscription = subscription_manager.create_subscription(customer_id, items, delivery_date, subscription_type)
         if subscription:
             logging.info(f"Subscription {subscription['subscription_id']} created for customer {customer_id}.")
@@ -172,7 +166,11 @@ def get_subscription_notifications(customer_id):
     try:
         logging.info(f"Fetching notifications for customer {customer_id}.")
         subscriptions = subscription_manager.get_customer_subscriptions(customer_id)
-        notifications = [subscription_manager.get_notification(sub['subscription_id']) for sub in subscriptions if subscription_manager.get_notification(sub['subscription_id'])]
+        notifications = []
+        for sub in subscriptions:
+            notification = subscription_manager.get_notification(sub['subscription_id'])
+            if notification:
+                notifications.append(notification)
         logging.info(f"Found {len(notifications)} notifications for customer {customer_id}.")
         return jsonify({'notifications': notifications})
     except Exception as e:

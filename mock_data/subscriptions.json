@@ -1,129 +1,6 @@
 {
   "subscriptions": [
     {
-      "subscription_id": "SUB011",
-      "customer_id": "WM001",
-      "items": [
-        {
-          "name": "choco",
-          "price": 20.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_date": "2025-07-15",
-      "status": "active",
-      "created_at": "2025-07-14T17:28:27.755159"
-    },
-    {
-      "subscription_id": "SUB002",
-      "customer_id": "WM001",
-      "items": [
-        {
-          "name": "Milk",
-          "price": 200.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_date": "2025-07-17",
-      "status": "active",
-      "created_at": "2025-07-14T17:33:32.219075"
-    },
-    {
-      "subscription_id": "SUB003",
-      "customer_id": "WM001",
-      "items": [
-        {
-          "name": "grocery",
-          "price": 20.0,
-          "quantity": 2
-        }
-      ],
-      "delivery_date": "2025-07-18",
-      "subscription_type": "daily",
-      "status": "active",
-      "created_at": "2025-07-14T09:52:52.046504"
-    },
-    {
-      "subscription_id": "SUB004",
-      "customer_id": "WM002",
-      "items": [
-        {
-          "name": "Milk",
-          "price": 90.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Tuesday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-15",
-      "status": "active",
-      "created_at": "2025-07-14T10:26:34.757028"
-    },
-    {
-      "subscription_id": "SUB005",
-      "customer_id": "WM002",
-      "items": [
-        {
-          "name": "Chocolate",
-          "price": 900.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Wednesday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-16",
-      "status": "cancelled",
-      "created_at": "2025-07-14T10:28:01.381422"
-    },
-    {
-      "subscription_id": "SUB006",
-      "customer_id": "WM002",
-      "items": [
-        {
-          "name": "Paneer",
-          "price": 100.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Wednesday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-16",
-      "status": "active",
-      "created_at": "2025-07-14T10:30:29.326336"
-    },
-    {
-      "subscription_id": "SUB007",
-      "customer_id": "WM001",
-      "items": [
-        {
-          "name": "ok",
-          "price": 2.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Monday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-21",
-      "status": "active",
-      "created_at": "2025-07-14T13:48:31.687278"
-    },
-    {
-      "subscription_id": "SUB008",
-      "customer_id": "WM001",
-      "items": [
-        {
-          "name": "ok",
-          "price": 10.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Monday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-21",
-      "status": "active",
-      "created_at": "2025-07-14T15:38:20.190896"
-    },
-    {
       "subscription_id": "SUB009",
       "customer_id": "WM001",
       "items": [
@@ -133,11 +10,41 @@
           "quantity": 1
         }
       ],
-      "delivery_day": "Tuesday",
       "frequency": "weekly",
       "next_delivery": "2025-07-15",
       "status": "active",
-      "created_at": "2025-07-14T15:38:42.160632"
+      "created_at": "2025-07-14T15:38:42.160632",
+      "delivery_date": "2025-07-01"
+    },
+    {
+      "subscription_id": "SUB002",
+      "customer_id": "WM001",
+      "items": [
+        {
+          "name": "Whey",
+          "price": 2000.0,
+          "quantity": 1
+        }
+      ],
+      "delivery_date": "2025-07-15",
+      "subscription_type": "weekly",
+      "status": "active",
+      "created_at": "2025-07-14T18:08:48.171709"
+    },
+    {
+      "subscription_id": "SUB003",
+      "customer_id": "WM001",
+      "items": [
+        {
+          "name": "Whey monthly",
+          "price": 2000.0,
+          "quantity": 1
+        }
+      ],
+      "delivery_date": "2025-07-31",
+      "subscription_type": "monthly",
+      "status": "active",
+      "created_at": "2025-07-14T18:09:40.272922"
     }
   ]
 }

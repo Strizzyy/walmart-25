@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime, timedelta, date
+from datetime import datetime, date
 from typing import Dict, List, Optional
 import calendar
 
@@ -81,14 +81,14 @@ class SubscriptionManager:
         """Check if a notification is needed based on subscription type"""
         for sub in self.subscriptions["subscriptions"]:
             if sub["subscription_id"] == subscription_id and sub["status"] == "active":
-                delivery_date = sub.get("delivery_date", sub.get("delivery_day", None))
-                subscription_type = sub.get("subscription_type", "weekly")
+                delivery_date = sub.get("delivery_date")
                 if delivery_date:
                     try:
                         next_delivery = datetime.strptime(delivery_date, "%Y-%m-%d").date()
-                        current_date = datetime.now().date()
+                        current_date = datetime.now().date()  # 08:34 PM +08, July 14, 2025
                         days_until = (next_delivery - current_date).days
                         items = ", ".join([item["name"] for item in sub["items"]])
+                        subscription_type = sub.get("subscription_type", "weekly")
                         if days_until == 1:
                             return {
                                 "message": f"Reminder: Your planned order {subscription_id} will restock {items} tomorrow on {delivery_date} ({subscription_type}).",
@@ -101,15 +101,7 @@ class SubscriptionManager:
                                 "subscription_id": subscription_id,
                                 "delivery_date": delivery_date
                             }
-                    except ValueError:
-                        print(f"Invalid date format for subscription {subscription_id}")
-                next_delivery = datetime.strptime(sub["next_delivery"], "%Y-%m-%d")
-                days_until = (next_delivery - datetime.now()).days
-                if days_until < 1:
-                    items = ", ".join([item["name"] for item in sub["items"]])
-                    return {
-                        "message": f"Reminder: Your planned order {subscription_id} will restock {items} on {sub['next_delivery']} i.e tomorrow.",
-                        "subscription_id": subscription_id,
-                        "delivery_date": sub["next_delivery"]
-     }
+                    except ValueError as e:
+                        print(f"Invalid date format for subscription {subscription_id}: {e}")
+                        return None
         return None
