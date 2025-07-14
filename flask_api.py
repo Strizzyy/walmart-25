@@ -4,9 +4,16 @@ import json
 import os
 from nlu_pipeline import NLUPipeline
 from datetime import datetime
+from werkzeug.utils import secure_filename
+import speech_recognition as sr
+from io import BytesIO
 
 app = Flask(__name__)
 CORS(app)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_DIR = os.path.join(BASE_DIR, 'mock_data', 'uploads')
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Initialize NLU Pipeline
 GROQ_API_KEY = "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"  # Replace with your actual API key
@@ -93,6 +100,35 @@ def chat():
             'error': 'I apologize, but I encountered an error. Please try again.',
             'details': str(e)
         }), 500
+    
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part in request'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    filename = secure_filename(file.filename)
+
+    # Use the absolute upload dir
+    file.save(os.path.join(UPLOAD_DIR, filename))
+
+    return jsonify({'message': f"File '{filename}' uploaded successfully."})
+
+
+@app.route('/speech-to-text', methods=['POST'])
+def speech_to_text():
+    if 'audio' not in request.files:
+        return jsonify({'error': 'No audio part in request'}), 400
+    audio_file = request.files['audio']
+    recognizer = sr.Recognizer()
+    audio_data = sr.AudioFile(BytesIO(audio_file.read()))
+    with audio_data as source:
+        audio = recognizer.record(source)
+    text = recognizer.recognize_google(audio)
+    return jsonify({'text': text})
 
 @app.route('/analytics', methods=['GET'])
 def get_analytics():
