@@ -12,7 +12,7 @@ CORS(app)
 load_dotenv()
 
 # Initialize NLU Pipeline and Subscription Manager
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # Replace with your actual API key
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 nlu = NLUPipeline(GROQ_API_KEY)
 subscription_manager = SubscriptionManager()
 
@@ -108,12 +108,13 @@ def create_subscription():
         data = request.json
         customer_id = data.get('customer_id')
         items = data.get('items')
-        delivery_day = data.get('delivery_day')
+        delivery_date = data.get('delivery_date')
+        subscription_type = data.get('subscription_type', 'weekly')  # Default to weekly if not provided
         
-        if not all([customer_id, items, delivery_day]):
+        if not all([customer_id, items, delivery_date]):
             return jsonify({'error': 'Missing required fields'}), 400
         
-        subscription = subscription_manager.create_subscription(customer_id, items, delivery_day)
+        subscription = subscription_manager.create_subscription(customer_id, items, delivery_date, subscription_type)
         if subscription:
             return jsonify({
                 'message': f'Subscription {subscription["subscription_id"]} created successfully',

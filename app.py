@@ -2,9 +2,10 @@ import streamlit as st
 import requests
 import json
 import time
-from datetime import datetime
+from datetime import datetime, date
 import plotly.express as px
 import plotly.graph_objects as go
+import calendar
 
 # Page configuration
 st.set_page_config(
@@ -174,6 +175,46 @@ st.markdown("""
         margin-bottom: 1rem;
     }
 
+    /* Calendar container */
+    .calendar-container {
+        background: var(--card-background);
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px var(--shadow-color);
+        color: var(--text-color);
+    }
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        text-align: center;
+    }
+    .calendar-day {
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        background: var(--light-gray);
+        color: var(--text-color);
+        transition: background 0.2s;
+    }
+    .calendar-day:hover {
+        background: var(--primary-color);
+    }
+    .calendar-day-selected {
+        background: var(--secondary-color);
+        color: var(--text-color);
+    }
+    .calendar-day-header {
+        font-weight: 600;
+        padding: 10px;
+        color: var(--text-color);
+    }
+    .calendar-day-disabled {
+        background: var(--background-color);
+        color: var(--light-gray);
+        cursor: not-allowed;
+    }
+
     /* Form styling */
     .stForm {
         background: var(--light-gray);
@@ -239,6 +280,10 @@ if "selected_customer" not in st.session_state:
     st.session_state.selected_customer = None
 if "customer_data" not in st.session_state:
     st.session_state.customer_data = None
+if "selected_date" not in st.session_state:
+    st.session_state.selected_date = None
+if "selected_subscription_type" not in st.session_state:
+    st.session_state.selected_subscription_type = "weekly"
 
 # Helper functions
 def get_customers():
@@ -300,12 +345,12 @@ def get_analytics():
         st.error(f"Error: {e}")
         return None
 
-def create_subscription(customer_id, items, delivery_day):
-    """Create a subscription via API"""
+def create_subscription(customer_id, items, delivery_date, subscription_type):
+    """Create a subscription via API with subscription type"""
     try:
         response = requests.post(
             f"{API_BASE_URL}/subscription",
-            json={"customer_id": customer_id, "items": items, "delivery_day": delivery_day},
+            json={"customer_id": customer_id, "items": items, "delivery_date": delivery_date, "subscription_type": subscription_type},
             timeout=5
         )
         if response.status_code in [200, 201]:
@@ -568,19 +613,21 @@ def subscription_page():
             # Display existing subscriptions
             subscriptions = get_subscriptions(customer_id)
             if subscriptions:
-                st.subheader("Current Order plans")
+                st.subheader("Current Order Plans")
                 for sub in subscriptions:
                     st.markdown(f"**Order Plan {sub['subscription_id']}**")
                     st.markdown(f"- **Items**: {', '.join([item['name'] for item in sub['items']])}")
-                    st.markdown(f"- **Delivery Day**: {sub['delivery_day']}")
-                    st.markdown(f"- **Next Delivery**: {sub['next_delivery']}")
+                    # Handle both delivery_date and delivery_day for backward compatibility
+                    delivery_info = sub.get('delivery_date', sub.get('delivery_day', 'N/A'))
+                    st.markdown(f"- **Delivery**: {delivery_info}")
+                    st.markdown(f"- **Type**: {sub.get('subscription_type', 'N/A')}")
                     st.markdown(f"- **Status**: {sub['status']}")
                     if st.button(f"Cancel {sub['subscription_id']}", key=f"cancel_{sub['subscription_id']}"):
                         if cancel_subscription(sub['subscription_id']):
                             st.success(f"Order Plan {sub['subscription_id']} cancelled.")
                             st.rerun()
             else:
-                st.info("No order plan found for this customer.")
+                st.info("No order plans found for this customer.")
 
             # Subscription notifications
             notifications = get_subscription_notifications(customer_id)
@@ -589,28 +636,81 @@ def subscription_page():
                 for notif in notifications:
                     st.markdown(f"- {notif['message']}")
 
+            # Placeholder Calendar for July 2025 in row and column format
+            st.subheader("Select Delivery Date (July 2025)")
+            with st.container():
+                st.markdown("""
+                <div class="calendar-container">
+                """, unsafe_allow_html=True)
+                # Generate calendar for July 2025
+                cal = calendar.monthcalendar(2025, 7)
+                days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+                current_date = datetime.now().date()  # Get current date for comparison
+
+                # Header row for days of the week
+                cols = st.columns(7)
+                for i, day in enumerate(days):
+                    with cols[i]:
+                        st.markdown(f'<div class="calendar-day-header">{day}</div>', unsafe_allow_html=True)
+
+                # Rows for each week
+                for week in cal:
+                    cols = st.columns(7)
+                    for i, day in enumerate(week):
+                        with cols[i]:
+                            if day == 0:
+                                st.markdown('<div class="calendar-day-disabled"></div>', unsafe_allow_html=True)
+                            else:
+                                # Create date object for the calendar day
+                                calendar_date = date(2025, 7, day)
+                                is_past_date = calendar_date < current_date
+                                is_selected = st.session_state.selected_date == calendar_date
+                                css_class = "calendar-day-selected" if is_selected else "calendar-day"
+                                if is_past_date:
+                                    css_class = "calendar-day-disabled"
+                                    st.markdown(f'<div class="{css_class}"></div>', unsafe_allow_html=True)
+                                else:
+                                    if st.button(
+                                        str(day),
+                                        key=f"calendar_day_{day}",
+                                        help=f"Select {calendar_date.strftime('%Y-%m-%d')}",
+                                        disabled=is_past_date
+                                    ):
+                                        st.session_state.selected_date = calendar_date
+                                        st.rerun()
+                                    st.markdown(f'<div class="{css_class}"></div>', unsafe_allow_html=True)
+
+                st.markdown('</div>', unsafe_allow_html=True)
+
             # Create new subscription
             st.subheader("Create New Subscription")
             with st.form(key="subscription_form"):
                 item_name = st.text_input("Item Name")
                 item_price = st.number_input("Item Price (₹)", min_value=0.0, step=0.01)
                 item_quantity = st.number_input("Quantity", min_value=1, step=1)
-                delivery_day = st.selectbox(
-                    "Delivery Day",
-                    options=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                    key="subscription_delivery_day_select"
+                subscription_type = st.selectbox(
+                    "Subscription Type",
+                    options=["daily", "weekly", "monthly"],
+                    index=["daily", "weekly", "monthly"].index(st.session_state.selected_subscription_type),
+                    key="subscription_type_select"
                 )
+                st.session_state.selected_subscription_type = subscription_type
+                delivery_date = st.session_state.selected_date.strftime("%Y-%m-%d") if st.session_state.selected_date else "Select a date from the calendar"
+                st.text_input("Delivery Date", value=delivery_date, disabled=True)
                 submit_button = st.form_submit_button("Create Subscription")
-                if submit_button and item_name and item_price and item_quantity:
+                if submit_button and item_name and item_price and item_quantity and st.session_state.selected_date:
                     items = [{"name": item_name, "price": item_price, "quantity": item_quantity}]
-                    response = create_subscription(customer_id, items, delivery_day)
+                    response = create_subscription(customer_id, items, delivery_date, subscription_type)
                     if response and ('message' in response or response.get('subscription')):
                         st.success(response.get('message', f"Order Plan created successfully!"))
+                        st.session_state.selected_date = None  # Reset selected date
                     elif response and 'error' in response:
                         st.error(f"Failed to create order plan: {response['error']}")
                     else:
                         st.error("Failed to create order plan. Please try again.")
                     st.rerun()
+                elif submit_button and not st.session_state.selected_date:
+                    st.error("Please select a delivery date from the calendar.")
         st.markdown("</div>", unsafe_allow_html=True)
 
 # Navigation

@@ -1,117 +1,47 @@
 {
   "subscriptions": [
     {
-      "subscription_id": "SUB001",
+      "subscription_id": "SUB011",
       "customer_id": "WM001",
       "items": [
         {
-          "name": "Amul Milk 1L",
-          "price": 60.0,
-          "quantity": 2,
-          "category": "Dairy"
+          "name": "choco",
+          "price": 20.0,
+          "quantity": 1
         }
       ],
-      "delivery_day": "Monday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-21",
+      "delivery_date": "2025-07-15",
       "status": "active",
-      "created_at": "2025-07-14T09:00:00Z"
+      "created_at": "2025-07-14T17:28:27.755159"
     },
     {
       "subscription_id": "SUB002",
       "customer_id": "WM001",
       "items": [
         {
-          "name": "Whey Protein",
-          "price": 2000.0,
+          "name": "Milk",
+          "price": 200.0,
           "quantity": 1
         }
       ],
-      "delivery_day": "Friday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-18",
+      "delivery_date": "2025-07-17",
       "status": "active",
-      "created_at": "2025-07-14T09:50:04.326694"
+      "created_at": "2025-07-14T17:33:32.219075"
     },
     {
       "subscription_id": "SUB003",
       "customer_id": "WM001",
       "items": [
         {
-          "name": "Chocolate",
-          "price": 60.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Thursday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-17",
-      "status": "active",
-      "created_at": "2025-07-14T09:52:52.046504"
-    },
-    {
-      "subscription_id": "SUB004",
-      "customer_id": "WM002",
-      "items": [
-        {
-          "name": "Milk",
-          "price": 90.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Tuesday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-15",
-      "status": "active",
-      "created_at": "2025-07-14T10:26:34.757028"
-    },
-    {
-      "subscription_id": "SUB005",
-      "customer_id": "WM002",
-      "items": [
-        {
-          "name": "Chocolate",
-          "price": 900.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Wednesday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-16",
-      "status": "cancelled",
-      "created_at": "2025-07-14T10:28:01.381422"
-    },
-    {
-      "subscription_id": "SUB006",
-      "customer_id": "WM002",
-      "items": [
-        {
-          "name": "Paneer",
-          "price": 100.0,
-          "quantity": 1
-        }
-      ],
-      "delivery_day": "Wednesday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-16",
-      "status": "active",
-      "created_at": "2025-07-14T10:30:29.326336"
-    },
-    {
-      "subscription_id": "SUB007",
-      "customer_id": "WM001",
-      "items": [
-        {
           "name": "grocery",
           "price": 20.0,
-          "quantity": 1
+          "quantity": 2
         }
       ],
-      "delivery_day": "Tuesday",
-      "frequency": "weekly",
-      "next_delivery": "2025-07-15",
-      "status": "cancelled",
-      "created_at": "2025-07-14T13:21:38.070786"
+      "delivery_date": "2025-07-18",
+      "subscription_type": "daily",
+      "status": "active",
+      "created_at": "2025-07-14T17:43:57.741346"
     }
   ]
 }
