@@ -2,11 +2,13 @@ import groq
 import re
 from typing import Dict, Tuple
 from data_handler import DataHandler
+from subscription_manager import SubscriptionManager
 
 class NLUPipeline:
     def __init__(self, groq_api_key: str):
         self.client = groq.Groq(api_key=groq_api_key)
         self.data_handler = DataHandler()
+        self.subscription_manager = SubscriptionManager()
         
         # Intent keywords for quick classification
         self.intent_keywords = {
@@ -15,6 +17,7 @@ class NLUPipeline:
             'PAYMENT_PROBLEM': ['charged twice', 'payment failed', 'double charge', 'not charged', 'billing'],
             'WALLET_ISSUE': ['wallet', 'balance', 'credited', 'deducted', 'shows 0', 'wallet empty'],
             'ORDER_STATUS': ['order status', 'tracking', 'shipped', 'when will', 'delivery date'],
+            'SUBSCRIPTION_REQUEST': ['subscription', 'weekly delivery', 'recurring order', 'restock weekly', 'auto delivery'],
             'GENERAL_INQUIRY': ['help', 'support', 'question', 'how to', 'what is']
         }
     
@@ -29,6 +32,13 @@ class NLUPipeline:
         amount_pattern = r'₹(\d+(?:\.\d{2})?)'
         match = re.search(amount_pattern, message)
         return float(match.group(1)) if match else None
+    
+    def extract_subscription_items(self, message: str) -> list[str]:
+        """Extract item names for subscription from message"""
+        # Simple extraction for demo; in production, use more sophisticated NLP
+        words = message.lower().split()
+        common_items = ['milk', 'vegetables', 'rice', 'oil', 'detergent', 'biscuits']
+        return [word for word in words if word in common_items]
     
     def classify_intent_quick(self, message: str) -> str:
         """Quick intent classification using keywords"""
@@ -48,7 +58,7 @@ class NLUPipeline:
         """Fallback intent classification using Groq"""
         prompt = f"""
         Classify this customer support message into ONE of these intents:
-        REFUND_REQUEST, DELIVERY_ISSUE, PAYMENT_PROBLEM, WALLET_ISSUE, ORDER_STATUS, GENERAL_INQUIRY
+        REFUND_REQUEST, DELIVERY_ISSUE, PAYMENT_PROBLEM, WALLET_ISSUE, ORDER_STATUS, SUBSCRIPTION_REQUEST, GENERAL_INQUIRY
         
         Message: "{message}"
         
@@ -90,6 +100,7 @@ class NLUPipeline:
         # Get customer context
         customer_orders = self.data_handler.get_customer_orders(customer_id)
         customer_payments = self.data_handler.get_customer_payments(customer_id)
+        customer_subscriptions = self.data_handler.get_customer_subscriptions(customer_id)
         
         # Build context for Groq
         context = f"""
@@ -102,6 +113,7 @@ class NLUPipeline:
         - Location: {customer['location']}
         
         Recent Orders: {len(customer_orders)} orders
+        Active Subscriptions: {len([s for s in customer_subscriptions if s['status'] == 'active'])} subscriptions
         Intent: {intent}
         Customer Message: "{message}"
         
@@ -134,6 +146,14 @@ class NLUPipeline:
             Recent payment issues found.
             """
         
+        elif intent == 'SUBSCRIPTION_REQUEST':
+            items = self.extract_subscription_items(message)
+            context += f"""
+            Customer wants to set up a subscription.
+            Potential items mentioned: {', '.join(items) if items else 'None'}
+            Suggest creating a subscription for these items with weekly delivery or ask for clarification.
+            """
+        
         context += "\n\nProvide a concise, helpful response (max 100 words)."
         
         try:
@@ -155,6 +175,7 @@ class NLUPipeline:
             'PAYMENT_PROBLEM': f"Hi {customer['name']}! I can help you with your payment concerns. Let me review your recent transactions.",
             'ORDER_STATUS': f"Hi {customer['name']}! I'll check your order status for you right away.",
             'REFUND_REQUEST': f"Hi {customer['name']}! I can help you with your refund request. Let me process this for you.",
+            'SUBSCRIPTION_REQUEST': f"Hi {customer['name']}! I can help you set up a weekly subscription. Please specify the items and preferred delivery day.",
             'GENERAL_INQUIRY': f"Hi {customer['name']}! I'm here to help. How can I assist you today?"
         }
         return responses.get(intent, "I'm here to help you with your query!")

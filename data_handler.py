@@ -9,6 +9,7 @@ class DataHandler:
         self.customers = self._load_json("customers.json")
         self.orders = self._load_json("orders.json")
         self.payments = self._load_json("payments.json")
+        self.subscriptions = self._load_json("subscriptions.json")
     
     def _load_json(self, filename: str) -> Dict:
         """Load JSON data from file"""
@@ -17,7 +18,7 @@ class DataHandler:
                 return json.load(f)
         except FileNotFoundError:
             print(f"Warning: {filename} not found")
-            return {}
+            return {"subscriptions": []} if filename == "subscriptions.json" else {}
     
     def get_customer(self, customer_id: str) -> Optional[Dict]:
         """Get customer by ID"""
@@ -62,3 +63,8 @@ class DataHandler:
         """Get failed payments for a customer"""
         payments_list = self.payments.get("payments", [])
         return [p for p in payments_list if p["customer_id"] == customer_id and p["status"] == "failed"]
+    
+    def get_customer_subscriptions(self, customer_id: str) -> List[Dict]:
+        """Get all subscriptions for a customer"""
+        subscriptions_list = self.subscriptions.get("subscriptions", [])
+        return [s for s in subscriptions_list if s["customer_id"] == customer_id]

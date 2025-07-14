@@ -1,4 +1,3 @@
-# app.py (Streamlit Frontend)
 import streamlit as st
 import requests
 import json
@@ -15,48 +14,217 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# Custom CSS with light/dark mode support
 st.markdown("""
 <style>
+    :root {
+        --primary-gradient-start: #0078d4;
+        --primary-gradient-end: #005a9e;
+        --primary-color: #0078d4;
+        --secondary-color: #22c55e;
+        --text-color: #ffffff;
+        --background-color: #1a1a1a;
+        --card-background: #2d2d2d;
+        --light-gray: #4a4a4a;
+        --shadow-color: rgba(0,0,0,0.2);
+        --hover-background: #005a9e;
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --primary-gradient-start: #0078d4;
+            --primary-gradient-end: #005a9e;
+            --primary-color: #005a9e;
+            --secondary-color: #22c55e;
+            --text-color: #1a1a1a;
+            --background-color: #f5f7fa;
+            --card-background: #ffffff;
+            --light-gray: #e5e7eb;
+            --shadow-color: rgba(0,0,0,0.1);
+            --hover-background: #004c91;
+        }
+    }
+
+    /* Global styles */
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        transition: all 0.3s ease;
+    }
+
+    /* Main header */
     .main-header {
-        background: linear-gradient(90deg, #0071ce, #004c91);
-        color: white;
-        padding: 1rem;
-        border-radius: 10px;
+        background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+        color: var(--text-color);
+        padding: 2rem;
+        border-radius: 12px;
         margin-bottom: 2rem;
+        box-shadow: 0 4px 6px var(--shadow-color);
     }
-    
+    .main-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .main-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    /* Sidebar styling */
+    .css-1d391kg {
+        background-color: var(--card-background);
+        border-right: 1px solid var(--light-gray);
+        padding: 1.5rem;
+    }
+    .css-1d391kg .stSelectbox {
+        background: var(--card-background);
+        border-radius: 8px;
+        padding: 0.5rem;
+        color: var(--text-color);
+        border: 1px solid var(--light-gray);
+    }
+    .css-1d391kg .stSelectbox option {
+        background: var(--card-background);
+        color: var(--text-color);
+    }
+
+    /* Customer info card */
     .customer-info {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        border-left: 4px solid #0071ce;
+        background: var(--card-background);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 6px solid var(--primary-color);
+        box-shadow: 0 4px 6px var(--shadow-color);
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
     }
-    
+
+    /* Chat container */
     .chat-container {
-        background: white;
-        border-radius: 10px;
-        padding: 1rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background: var(--card-background);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px var(--shadow-color);
+        min-height: 500px;
+        max-height: 600px;
+        overflow-y: auto;
     }
-    
-    .metric-card {
-        background: white;
-        padding: 1rem;
+    .chat-container .stChatMessage {
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--light-gray);
     }
-    
+    .chat-container .stChatMessage[data-testid="stChatMessageUser"] {
+        background: #e6f3ff;
+    }
+
+    /* Metric cards */
+    .metric-card {
+        background: var(--card-background);
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px var(--shadow-color);
+        text-align: center;
+        transition: transform 0.2s;
+        color: var(--text-color);
+    }
+    .metric-card:hover {
+        transform: translateY(-4px);
+    }
+    .metric-card h4 {
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+    .metric-card p {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    /* Buttons */
     .scenario-button {
-        background: #0071ce;
-        color: white;
+        background: var(--primary-color);
+        color: var(--text-color);
         border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        margin: 0.25rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        margin: 0.5rem 0;
         cursor: pointer;
         width: 100%;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+    .scenario-button:hover {
+        background: var(--hover-background);
+    }
+
+    /* Subscription panel */
+    .subscription-panel {
+        background: var(--card-background);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 6px solid var(--secondary-color);
+        box-shadow: 0 4px 6px var(--shadow-color);
+        color: var(--text-color);
+    }
+    .subscription-panel h3 {
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    /* Form styling */
+    .stForm {
+        background: var(--light-gray);
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--light-gray);
+        color: var(--text-color);
+    }
+    .stButton>button {
+        background: var(--primary-color);
+        color: var(--text-color);
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        font-weight: 500;
+    }
+    .stButton>button:hover {
+        background: var(--hover-background);
+    }
+
+    /* Navigation */
+    .stMultiPageNav {
+        background: var(--card-background);
+        padding: 1rem;
+        border-bottom: 1px solid var(--light-gray);
+        margin-bottom: 2rem;
+    }
+    .stMultiPageNav button {
+        color: var(--text-color);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        margin-right: 0.5rem;
+    }
+    .stMultiPageNav button:hover {
+        background: var(--light-gray);
+    }
+    .stMultiPageNav button[selected] {
+        background: var(--primary-color);
+        color: var(--text-color);
+    }
+
+    /* Input and select styling */
+    .stTextInput, .stNumberInput, .stSelectbox div {
+        background: var(--card-background) !important;
+        color: var(--text-color) !important;
+        border: 1px solid var(--light-gray) !important;
+    }
+    .stTextInput input, .stNumberInput input, .stSelectbox select {
+        background: var(--card-background) !important;
+        color: var(--text-color) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -132,8 +300,67 @@ def get_analytics():
         st.error(f"Error: {e}")
         return None
 
-# Main app
-def main():
+def create_subscription(customer_id, items, delivery_day):
+    """Create a subscription via API"""
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/subscription",
+            json={"customer_id": customer_id, "items": items, "delivery_day": delivery_day},
+            timeout=5
+        )
+        if response.status_code in [200, 201]:
+            return response.json()
+        else:
+            st.error(f"Failed to create subscription: HTTP {response.status_code}")
+            return None
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error: {e}")
+        return None
+
+def get_subscriptions(customer_id):
+    """Fetch subscriptions for a customer"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/subscriptions/{customer_id}", timeout=5)
+        if response.status_code == 200:
+            return response.json().get('subscriptions', [])
+        else:
+            st.error(f"Failed to fetch subscriptions: HTTP {response.status_code}")
+            return []
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error: {e}")
+        return []
+
+def cancel_subscription(subscription_id):
+    """Cancel a subscription via API"""
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/subscription/cancel/{subscription_id}",
+            timeout=5
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            st.error(f"Failed to cancel subscription: HTTP {response.status_code}")
+            return None
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error: {e}")
+        return None
+
+def get_subscription_notifications(customer_id):
+    """Fetch subscription notifications"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/subscription/notifications/{customer_id}", timeout=5)
+        if response.status_code == 200:
+            return response.json().get('notifications', [])
+        else:
+            st.error(f"Failed to fetch notifications: HTTP {response.status_code}")
+            return []
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error: {e}")
+        return []
+
+# Page definitions
+def main_page():
     # Header
     st.markdown("""
     <div class="main-header">
@@ -152,7 +379,8 @@ def main():
                 "Select Customer",
                 options=list(customer_options.keys()),
                 index=0 if customer_options else None,
-                placeholder="Select a customer..."
+                placeholder="Select a customer...",
+                key="main_page_customer_select"
             )
             customer_id = customer_options.get(selected_customer)
         else:
@@ -173,7 +401,8 @@ def main():
                 "My payment for ORD002 failed",
                 "I want a refund for ORD005",
                 "My wallet balance shows ₹0",
-                "When will ORD003 be delivered?"
+                "When will ORD003 be delivered?",
+                "Set up weekly delivery for milk"
             ]
             for scenario in scenarios:
                 if st.button(scenario, key=f"scenario_{scenario}", help="Send this predefined query"):
@@ -191,7 +420,7 @@ def main():
                             "timestamp": response['timestamp']
                         })
 
-    # Main layout with two columns
+    # Main layout with two columns (chat + customer info/analytics)
     col1, col2 = st.columns([2, 1])
 
     # Column 1: Chat interface
@@ -302,5 +531,96 @@ def main():
         else:
             st.info("Analytics data unavailable.")
 
-if __name__ == "__main__":
-    main()
+def subscription_page():
+    # Header
+    st.markdown("""
+    <div class="main-header">
+        <h1>🛒 Subscription Management</h1>
+        <p>Manage your Walmart subscriptions</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Customer selection
+    customers = get_customers()
+    if customers:
+        customer_options = {f"{c['name']} ({c['customer_id']})": c['customer_id'] for c in customers}
+        selected_customer = st.selectbox(
+            "Select Customer",
+            options=list(customer_options.keys()),
+            index=0 if customer_options else None,
+            placeholder="Select a customer...",
+            key="subscription_page_customer_select"
+        )
+        customer_id = customer_options.get(selected_customer)
+    else:
+        st.warning("No customers available. Please check the API or data files.")
+        customer_id = None
+        selected_customer = None
+
+    # Subscription Management
+    with st.container():
+        st.markdown("""
+        <div class="subscription-panel">
+        """, unsafe_allow_html=True)
+        if not customer_id:
+            st.info("Select a customer to manage subscriptions.")
+        else:
+            # Display existing subscriptions
+            subscriptions = get_subscriptions(customer_id)
+            if subscriptions:
+                st.subheader("Current Subscriptions")
+                for sub in subscriptions:
+                    st.markdown(f"**Subscription {sub['subscription_id']}**")
+                    st.markdown(f"- **Items**: {', '.join([item['name'] for item in sub['items']])}")
+                    st.markdown(f"- **Delivery Day**: {sub['delivery_day']}")
+                    st.markdown(f"- **Next Delivery**: {sub['next_delivery']}")
+                    st.markdown(f"- **Status**: {sub['status']}")
+                    if st.button(f"Cancel {sub['subscription_id']}", key=f"cancel_{sub['subscription_id']}"):
+                        if cancel_subscription(sub['subscription_id']):
+                            st.success(f"Subscription {sub['subscription_id']} cancelled.")
+                            st.rerun()
+            else:
+                st.info("No subscriptions found for this customer.")
+
+            # Subscription notifications
+            notifications = get_subscription_notifications(customer_id)
+            if notifications:
+                st.subheader("Upcoming Deliveries")
+                for notif in notifications:
+                    st.markdown(f"- {notif['message']}")
+
+            # Create new subscription
+            st.subheader("Create New Subscription")
+            with st.form(key="subscription_form"):
+                item_name = st.text_input("Item Name")
+                item_price = st.number_input("Item Price (₹)", min_value=0.0, step=0.01)
+                item_quantity = st.number_input("Quantity", min_value=1, step=1)
+                delivery_day = st.selectbox(
+                    "Delivery Day",
+                    options=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                    key="subscription_delivery_day_select"
+                )
+                submit_button = st.form_submit_button("Create Subscription")
+                if submit_button and item_name and item_price and item_quantity:
+                    items = [{"name": item_name, "price": item_price, "quantity": item_quantity}]
+                    response = create_subscription(customer_id, items, delivery_day)
+                    if response and ('message' in response or response.get('subscription')):
+                        st.success(response.get('message', f"Subscription created successfully!"))
+                    elif response and 'error' in response:
+                        st.error(f"Failed to create subscription: {response['error']}")
+                    else:
+                        st.error("Failed to create subscription. Please try again.")
+                    st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
+
+# Navigation
+st.markdown("""
+<div class="stMultiPageNav">
+</div>
+""", unsafe_allow_html=True)
+
+page = st.radio("Navigate", ["Support Dashboard", "Subscriptions"], horizontal=True, key="page_navigation")
+if page == "Support Dashboard":
+    main_page()
+else:
+    subscription_page()

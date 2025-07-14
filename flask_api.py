@@ -3,14 +3,16 @@ from flask_cors import CORS
 import json
 import os
 from nlu_pipeline import NLUPipeline
+from subscription_manager import SubscriptionManager
 from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
 
-# Initialize NLU Pipeline
+# Initialize NLU Pipeline and Subscription Manager
 GROQ_API_KEY = "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"  # Replace with your actual API key
 nlu = NLUPipeline(GROQ_API_KEY)
+subscription_manager = SubscriptionManager()
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -46,14 +48,17 @@ def get_customer_info(customer_id):
         
         orders = nlu.data_handler.get_customer_orders(customer_id)
         payments = nlu.data_handler.get_customer_payments(customer_id)
+        subscriptions = nlu.data_handler.get_customer_subscriptions(customer_id)
         
         return jsonify({
             'customer': customer,
             'orders': orders,
             'payments': payments,
+            'subscriptions': subscriptions,
             'summary': {
                 'total_orders': len(orders),
                 'total_payments': len(payments),
+                'total_subscriptions': len(subscriptions),
                 'wallet_balance': customer['wallet_balance']
             }
         })
@@ -94,6 +99,62 @@ def chat():
             'details': str(e)
         }), 500
 
+@app.route('/subscription', methods=['POST'])
+def create_subscription():
+    """Create a new subscription"""
+    try:
+        data = request.json
+        customer_id = data.get('customer_id')
+        items = data.get('items')
+        delivery_day = data.get('delivery_day')
+        
+        if not all([customer_id, items, delivery_day]):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        subscription = subscription_manager.create_subscription(customer_id, items, delivery_day)
+        if subscription:
+            return jsonify({
+                'message': f'Subscription {subscription["subscription_id"]} created successfully',
+                'subscription': subscription
+            }), 201
+        else:
+            return jsonify({'error': 'Failed to create subscription'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/subscriptions/<customer_id>', methods=['GET'])
+def get_subscriptions(customer_id):
+    """Get all subscriptions for a customer"""
+    try:
+        subscriptions = subscription_manager.get_customer_subscriptions(customer_id)
+        return jsonify({'subscriptions': subscriptions})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/subscription/cancel/<subscription_id>', methods=['POST'])
+def cancel_subscription(subscription_id):
+    """Cancel a subscription"""
+    try:
+        if subscription_manager.cancel_subscription(subscription_id):
+            return jsonify({'message': f'Subscription {subscription_id} cancelled'})
+        return jsonify({'error': 'Subscription not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/subscription/notifications/<customer_id>', methods=['GET'])
+def get_subscription_notifications(customer_id):
+    """Get subscription notifications for a customer"""
+    try:
+        subscriptions = subscription_manager.get_customer_subscriptions(customer_id)
+        notifications = []
+        for sub in subscriptions:
+            notification = subscription_manager.get_notification(sub['subscription_id'])
+            if notification:
+                notifications.append(notification)
+        return jsonify({'notifications': notifications})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/analytics', methods=['GET'])
 def get_analytics():
     """Get basic analytics for admin dashboard"""
@@ -109,6 +170,7 @@ def get_analytics():
                 'PAYMENT_PROBLEM': 22,
                 'ORDER_STATUS': 20,
                 'REFUND_REQUEST': 15,
+                'SUBSCRIPTION_REQUEST': 10,
                 'GENERAL_INQUIRY': 7
             },
             'customer_satisfaction': 4.3,
@@ -116,7 +178,8 @@ def get_analytics():
                 'Wallet balance discrepancy',
                 'Delivery delays',
                 'Payment failures',
-                'Order tracking'
+                'Order tracking',
+                'Subscription setup'
             ]
         }
         return jsonify(analytics)
@@ -134,6 +197,10 @@ if __name__ == '__main__':
     print("- GET /customers - Get all customers")
     print("- GET /customer/<id> - Get customer details")
     print("- POST /chat - Chat with AI assistant")
+    print("- POST /subscription - Create a subscription")
+    print("- GET /subscriptions/<customer_id> - Get customer subscriptions")
+    print("- POST /subscription/cancel/<subscription_id> - Cancel a subscription")
+    print("- GET /subscription/notifications/<customer_id> - Get subscription notifications")
     print("- GET /analytics - Get analytics data")
     
     app.run(debug=True, host='0.0.0.0', port=5000)
