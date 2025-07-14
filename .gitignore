@@ -3,41 +3,33 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Environment variables
-.env
-
-# Virtual environment
+# Environment folders
+myenv/
 venv/
 .venv/
+
+# Environment variables
+.env
 
 # VSCode settings
 .vscode/
 
-
-
 # Logs and temporary files
 *.log
 *.tmp
+*.swp
 
-# Python egg info
+# Python packaging
 *.egg-info/
 dist/
 build/
 
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
+# OS-specific
+.DS_Store
+Thumbs.db
 
-# Test coverage reports
-htmlcov/
-.coverage
-.tox/
+# Pytest cache
+.pytest_cache/
 
-# SQLite DB files (if any)
-*.sqlite3
-*.db
-
-# Pycharm specific
-.idea/
-
-# Other
-*.bak
+# Streamlit state cache
+.streamlit/

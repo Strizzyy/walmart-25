@@ -103,4 +103,13 @@ class SubscriptionManager:
                             }
                     except ValueError:
                         print(f"Invalid date format for subscription {subscription_id}")
+                next_delivery = datetime.strptime(sub["next_delivery"], "%Y-%m-%d")
+                days_until = (next_delivery - datetime.now()).days
+                if days_until < 1:
+                    items = ", ".join([item["name"] for item in sub["items"]])
+                    return {
+                        "message": f"Reminder: Your planned order {subscription_id} will restock {items} on {sub['next_delivery']} i.e tomorrow.",
+                        "subscription_id": subscription_id,
+                        "delivery_date": sub["next_delivery"]
+     }
         return None
